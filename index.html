@@ -4,81 +4,109 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roasted Flavors Dashboard</title>
-  <link rel="icon" href="https://fav.farm/🔥" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: 'Roboto', sans-serif;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      color: #111;
-      height: 100vh;
-      width: 100vw;
+      color: #fff;
       overflow: hidden;
-      transition: background-image 0.5s ease-in-out;
+    }
+    body {
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.5s ease;
     }
     .container {
       position: absolute;
-      top: 3%;
-      right: 3%;
+      top: 20px;
+      right: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      max-width: 300px;
+      gap: 12px;
+      align-items: flex-end;
     }
-    .title {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 5px;
+    .header {
       text-align: right;
+      margin-bottom: 10px;
     }
-    .subinfo {
+    .header h2 {
+      font-size: 1rem;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0;
+    }
+    .header small {
       font-size: 0.7rem;
-      text-align: right;
-      color: #444;
-      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.6);
     }
     .card {
-      background: linear-gradient(135deg, rgba(245, 245, 245, 0.8), rgba(230, 230, 230, 0.8));
-      border-radius: 12px;
-      padding: 10px 15px;
+      width: 180px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #fff;
     }
     .label {
       font-size: 0.75rem;
-      color: #555;
+      opacity: 0.8;
     }
     .value {
-      font-weight: 600;
-      font-size: 1.1rem;
+      font-weight: bold;
     }
-    .safe { color: #2e7d32; }
-    .warn { color: #ef6c00; }
-    .danger { color: #b71c1c; }
+    .green { color: #00e676; }
+    .orange { color: #ffc400; }
+    .red { color: #ff5252; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="title">ROASTED FLAVORS DASHBOARD</div>
-    <div class="subinfo">Updated: 5/11/2025, 4:44:32 AM<br>Weather: ☀️ 32°C</div>
-    <div class="card"><span class="label">Temperature</span><span class="value safe">0.00 °C</span></div>
-    <div class="card"><span class="label">CO₂</span><span class="value warn">0.29 ppm</span></div>
-    <div class="card"><span class="label">NH₃</span><span class="value warn">0.53 ppm</span></div>
-    <div class="card"><span class="label">Benzene</span><span class="value safe">0.43 ppm</span></div>
-    <div class="card"><span class="label">Alcohol</span><span class="value warn">0.59 ppm</span></div>
-    <div class="card"><span class="label">Smoke</span><span class="value safe">0.22 ppm</span></div>
-    <div class="card"><span class="label">PM1.0</span><span class="value safe">0 µg/m³</span></div>
-    <div class="card"><span class="label">PM2.5</span><span class="value safe">0 µg/m³</span></div>
+    <div class="header">
+      <h2>ROASTED FLAVORS DASHBOARD</h2>
+      <small>Updated: <span id="time"></span><br/>Weather: <span id="weatherIcon">☀️</span></small>
+    </div>
+    <div class="card"><div class="label">Temperature</div><div class="value green">0.00 °C</div></div>
+    <div class="card"><div class="label">CO₂</div><div class="value orange">0.29 ppm</div></div>
+    <div class="card"><div class="label">NH₃</div><div class="value orange">0.53 ppm</div></div>
+    <div class="card"><div class="label">Benzene</div><div class="value green">0.43 ppm</div></div>
+    <div class="card"><div class="label">Alcohol</div><div class="value red">0.59 ppm</div></div>
+    <div class="card"><div class="label">Smoke</div><div class="value green">0.22 ppm</div></div>
+    <div class="card"><div class="label">PM1.0</div><div class="value green">0 µg/m³</div></div>
+    <div class="card"><div class="label">PM2.5</div><div class="value green">0 µg/m³</div></div>
   </div>
+
   <script>
-    const hour = new Date().getHours();
-    const isDay = hour >= 6 && hour < 18;
-    document.body.style.backgroundImage = isDay 
-      ? "url('BG Dashboard Sora Day.png')" 
-      : "url('BG Dashboard Sora Night.png')";
+    function updateTime() {
+      const now = new Date();
+      const time = now.toLocaleString();
+      document.getElementById('time').textContent = time;
+    }
+
+    function setBackground() {
+      const hour = new Date().getHours();
+      const body = document.body;
+      const weatherIcon = document.getElementById('weatherIcon');
+      if (hour >= 6 && hour < 18) {
+        body.style.backgroundImage = "url('BG Dashboard Sora Day.png')";
+        weatherIcon.textContent = '☀️';
+        document.querySelectorAll('.card').forEach(card => card.style.background = 'rgba(240, 240, 240, 0.2)');
+      } else {
+        body.style.backgroundImage = "url('BG Dashboard Sora Night.png')";
+        weatherIcon.textContent = '🌙';
+        document.querySelectorAll('.card').forEach(card => card.style.background = 'rgba(0, 0, 0, 0.35)');
+      }
+    }
+
+    setInterval(updateTime, 1000);
+    setBackground();
   </script>
 </body>
 </html>
