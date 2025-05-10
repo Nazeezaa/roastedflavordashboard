@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roasted Flavors Dashboard</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: url('BG Dashboard Sora Day.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #111;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+    .container {
+      position: absolute;
+      top: 3%;
+      right: 3%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 300px;
+    }
+    .title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+      text-align: right;
+    }
+    .subinfo {
+      font-size: 0.7rem;
+      text-align: right;
+      color: #444;
+      margin-bottom: 8px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      padding: 10px 15px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .label {
+      font-size: 0.75rem;
+      color: #555;
+    }
+    .value {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .safe { color: #2e7d32; }
+    .warn { color: #ef6c00; }
+    .danger { color: #b71c1c; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">ROASTED FLAVORS DASHBOARD</div>
+    <div class="subinfo">Updated: 5/11/2025, 4:44:32 AM<br>Weather: ☀️ 32°C</div>
+    <div class="card"><span class="label">Temperature</span><span class="value safe">0.00 °C</span></div>
+    <div class="card"><span class="label">CO₂</span><span class="value warn">0.29 ppm</span></div>
+    <div class="card"><span class="label">NH₃</span><span class="value warn">0.53 ppm</span></div>
+    <div class="card"><span class="label">Benzene</span><span class="value safe">0.43 ppm</span></div>
+    <div class="card"><span class="label">Alcohol</span><span class="value warn">0.59 ppm</span></div>
+    <div class="card"><span class="label">Smoke</span><span class="value safe">0.22 ppm</span></div>
+    <div class="card"><span class="label">PM1.0</span><span class="value safe">0 µg/m³</span></div>
+    <div class="card"><span class="label">PM2.5</span><span class="value safe">0 µg/m³</span></div>
+  </div>
+</body>
+</html>
