@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roasted Flavors Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <title>ROASTED FLAVORS DASHBOARD</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -12,146 +12,116 @@
       font-family: 'Roboto', sans-serif;
       background: url('BG Dashboard Sora Night.png') no-repeat center center fixed;
       background-size: cover;
-      color: #fff;
-    }
-    header {
-      padding: 1rem;
-      text-align: right;
-      font-size: 0.8rem;
-    }
-    header h1 {
-      text-align: left;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin: 0 0 0.25rem 1rem;
+      color: white;
     }
     .dashboard {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
       position: absolute;
-      top: 3rem;
-      right: 2rem;
+      top: 20px;
+      right: 20px;
       width: 220px;
+    }
+    .dashboard-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: right;
+      color: #fff;
+    }
+    .updated-time {
+      font-size: 10px;
+      text-align: right;
+      margin-bottom: 12px;
+      color: #bbb;
     }
     .card {
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      backdrop-filter: blur(10px);
-      font-size: 0.9rem;
+      backdrop-filter: blur(6px);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      color: #ddd;
+      font-size: 12px;
     }
     .value {
       font-weight: 700;
     }
-    .status-good { color: #00e676; }
-    .status-moderate { color: #ffb300; }
-    .status-bad { color: #ef5350; }
-    .toolbar {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-    }
-    .log-btn, .date-picker {
-      margin: 0.25rem;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
+    .green { color: #2ecc71; }
+    .orange { color: #f39c12; }
+    .red { color: #e74c3c; }
+    #log-toggle {
+      margin-top: 14px;
+      background: rgba(255,255,255,0.1);
       border: none;
-      background: rgba(255,255,255,0.15);
-      color: white;
+      color: #fff;
+      padding: 6px 10px;
       cursor: pointer;
+      border-radius: 6px;
+      font-size: 12px;
     }
-    .log-modal {
+    #log-panel {
+      display: none;
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
-      max-height: 40%;
-      background: rgba(0, 0, 0, 0.8);
+      right: 0;
+      height: 40%;
+      background: rgba(0,0,0,0.9);
+      color: #fff;
       overflow-y: auto;
-      display: none;
-      color: white;
-      font-size: 0.8rem;
-    }
-    .log-modal table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .log-modal th, .log-modal td {
-      border: 1px solid #333;
-      padding: 0.4rem;
-      text-align: left;
+      font-size: 12px;
+      padding: 16px;
     }
     canvas {
-      max-width: 100%;
-      height: 200px;
-      margin-top: 1rem;
+      width: 100% !important;
+      max-height: 200px;
+    }
+    @media (max-width: 768px) {
+      .dashboard {
+        right: 10px;
+        width: 90%;
+        max-width: 320px;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>ROASTED FLAVORS DASHBOARD</h1>
-    <div>Updated: 5/11/2025, 5:40:47 AM</div>
-    <div>Weather: 🌙</div>
-  </header>
-
-  <div class="toolbar">
-    <input type="date" class="date-picker" />
-    <button class="log-btn" onclick="document.querySelector('.log-modal').style.display='block'">View Logs</button>
-  </div>
-
   <div class="dashboard">
-    <div class="card"> <span>Temperature</span> <span class="value status-good">0.00 °C</span></div>
-    <div class="card"> <span>CO₂</span> <span class="value status-moderate">0.29 ppm</span></div>
-    <div class="card"> <span>NH₃</span> <span class="value status-moderate">0.53 ppm</span></div>
-    <div class="card"> <span>Benzene</span> <span class="value status-good">0.43 ppm</span></div>
-    <div class="card"> <span>Alcohol</span> <span class="value status-bad">0.59 ppm</span></div>
-    <div class="card"> <span>Smoke</span> <span class="value status-good">0.22 ppm</span></div>
-    <div class="card"> <span>PM1.0</span> <span class="value status-good">0 μg/m³</span></div>
-    <div class="card"> <span>PM2.5</span> <span class="value status-good">0 μg/m³</span></div>
+    <div class="dashboard-title">ROASTED FLAVORS DASHBOARD</div>
+    <div class="updated-time" id="updateTime"></div>
+
+    <div class="card"><span>Temperature</span><span class="value green">0.00 °C</span></div>
+    <div class="card"><span>CO₂</span><span class="value orange">0.29 ppm</span></div>
+    <div class="card"><span>NH₃</span><span class="value orange">0.53 ppm</span></div>
+    <div class="card"><span>Benzene</span><span class="value green">0.43 ppm</span></div>
+    <div class="card"><span>Alcohol</span><span class="value red">0.59 ppm</span></div>
+    <div class="card"><span>Smoke</span><span class="value green">0.22 ppm</span></div>
+    <div class="card"><span>PM1.0</span><span class="value green">0 µg/m³</span></div>
+    <div class="card"><span>PM2.5</span><span class="value green">0 µg/m³</span></div>
+
+    <button id="log-toggle">📄 View Full Log</button>
   </div>
 
-  <div class="log-modal">
-    <table>
-      <thead>
-        <tr><th>Timestamp</th><th>Temp</th><th>CO₂</th><th>NH₃</th><th>Benzene</th><th>Alcohol</th><th>Smoke</th><th>PM1.0</th><th>PM2.5</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>2025-05-11 05:40</td><td>0.00</td><td>0.29</td><td>0.53</td><td>0.43</td><td>0.59</td><td>0.22</td><td>0</td><td>0</td></tr>
-      </tbody>
-    </table>
+  <div id="log-panel">
+    <h4>Full Log (Recent)</h4>
+    <pre>11/05/2025 05:40 - CO₂: 0.29 ppm | PM2.5: 0 µg/m³ | Temp: 0 °C...</pre>
+    <pre>11/05/2025 05:35 - CO₂: 0.31 ppm | PM2.5: 3 µg/m³ | Temp: 0 °C...</pre>
+    <pre>11/05/2025 05:30 - CO₂: 0.28 ppm | PM2.5: 1 µg/m³ | Temp: 0 °C...</pre>
   </div>
-
-  <canvas id="lineChart"></canvas>
 
   <script>
-    // Chart mockup
-    const ctx = document.getElementById('lineChart');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['04:00', '04:05', '04:10', '04:15'],
-        datasets: [{
-          label: 'PM2.5 µg/m³',
-          data: [0, 12, 25, 17],
-          borderColor: '#4fc3f7',
-          backgroundColor: 'rgba(79,195,247,0.2)'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {legend: {display: true}},
-        scales: {
-          y: {beginAtZero: true},
-          x: {display: true}
-        }
-      }
+    // Toggle log
+    document.getElementById('log-toggle').addEventListener('click', () => {
+      const logPanel = document.getElementById('log-panel');
+      logPanel.style.display = logPanel.style.display === 'none' ? 'block' : 'none';
     });
+
+    // Auto time update
+    const timeEl = document.getElementById('updateTime');
+    setInterval(() => {
+      const now = new Date();
+      timeEl.innerText = `Updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+    }, 5000);
   </script>
 </body>
 </html>
