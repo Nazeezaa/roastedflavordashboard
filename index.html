@@ -1,112 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roasted Flavors Dashboard</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROASTED FLAVORS DASHBOARD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Roboto', sans-serif;
-      color: #fff;
-      overflow: hidden;
-    }
     body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: url('BG Dashboard Sora Night.png') no-repeat center center fixed;
       background-size: cover;
-      background-position: center;
-      transition: background-image 0.5s ease;
+      color: #fff;
     }
-    .container {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+    .dashboard {
       display: flex;
       flex-direction: column;
-      gap: 12px;
       align-items: flex-end;
+      padding: 20px;
     }
-    .header {
+    .title {
+      font-weight: 700;
+      font-size: 16px;
+      text-align: right;
+      margin-bottom: 5px;
+    }
+    .datetime {
+      font-size: 10px;
+      color: #aaa;
       text-align: right;
       margin-bottom: 10px;
     }
-    .header h2 {
-      font-size: 1rem;
-      font-weight: bold;
-      color: rgba(255, 255, 255, 0.8);
-      margin: 0;
-    }
-    .header small {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.6);
+    .weather {
+      font-size: 12px;
+      margin-bottom: 20px;
     }
     .card {
-      width: 180px;
-      padding: 10px 14px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.6);
       border-radius: 10px;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      padding: 10px 15px;
+      margin: 4px;
+      width: 140px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-      color: #fff;
-    }
-    .label {
-      font-size: 0.75rem;
-      opacity: 0.8;
+      font-size: 14px;
     }
     .value {
       font-weight: bold;
     }
-    .green { color: #00e676; }
-    .orange { color: #ffc400; }
-    .red { color: #ff5252; }
+    .green { color: #00ff99; }
+    .orange { color: #ffcc00; }
+    .red { color: #ff4444; }
+    .cyan { color: #00ffff; }
+    @media (max-width: 600px) {
+      .dashboard {
+        align-items: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h2>ROASTED FLAVORS DASHBOARD</h2>
-      <small>Updated: <span id="time"></span><br/>Weather: <span id="weatherIcon">☀️</span></small>
-    </div>
-    <div class="card"><div class="label">Temperature</div><div class="value green">0.00 °C</div></div>
-    <div class="card"><div class="label">CO₂</div><div class="value orange">0.29 ppm</div></div>
-    <div class="card"><div class="label">NH₃</div><div class="value orange">0.53 ppm</div></div>
-    <div class="card"><div class="label">Benzene</div><div class="value green">0.43 ppm</div></div>
-    <div class="card"><div class="label">Alcohol</div><div class="value red">0.59 ppm</div></div>
-    <div class="card"><div class="label">Smoke</div><div class="value green">0.22 ppm</div></div>
-    <div class="card"><div class="label">PM1.0</div><div class="value green">0 µg/m³</div></div>
-    <div class="card"><div class="label">PM2.5</div><div class="value green">0 µg/m³</div></div>
+  <div class="dashboard">
+    <div class="title">ROASTED FLAVORS DASHBOARD</div>
+    <div class="datetime" id="datetime"></div>
+    <div class="weather">Weather: <span id="weather-icon">🌙</span></div>
+    <div class="card"><span>Temperature</span><span class="value green" id="field1">0.00 °C</span></div>
+    <div class="card"><span>CO₂</span><span class="value orange" id="field2">0.29 ppm</span></div>
+    <div class="card"><span>NH₃</span><span class="value orange" id="field3">0.53 ppm</span></div>
+    <div class="card"><span>Benzene</span><span class="value green" id="field4">0.43 ppm</span></div>
+    <div class="card"><span>Alcohol</span><span class="value red" id="field5">0.59 ppm</span></div>
+    <div class="card"><span>Smoke</span><span class="value green" id="field6">0.22 ppm</span></div>
+    <div class="card"><span>PM1.0</span><span class="value cyan" id="field7">0 µg/m³</span></div>
+    <div class="card"><span>PM2.5</span><span class="value cyan" id="field8">0 µg/m³</span></div>
   </div>
-
   <script>
+    const apiKey = '1MLQRZI24QGYN958';
+    const channelId = '2956838';
+
+    async function fetchData() {
+      const url = `https://api.thingspeak.com/channels/${channelId}/feeds/last.json?api_key=${apiKey}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      document.getElementById('field1').textContent = parseFloat(data.field1).toFixed(2) + ' °C';
+      document.getElementById('field2').textContent = parseFloat(data.field2).toFixed(2) + ' ppm';
+      document.getElementById('field3').textContent = parseFloat(data.field3).toFixed(2) + ' ppm';
+      document.getElementById('field4').textContent = parseFloat(data.field4).toFixed(2) + ' ppm';
+      document.getElementById('field5').textContent = parseFloat(data.field5).toFixed(2) + ' ppm';
+      document.getElementById('field6').textContent = parseFloat(data.field6).toFixed(2) + ' ppm';
+      document.getElementById('field7').textContent = parseFloat(data.field7).toFixed(0) + ' µg/m³';
+      document.getElementById('field8').textContent = parseFloat(data.field8).toFixed(0) + ' µg/m³';
+    }
+
     function updateTime() {
       const now = new Date();
-      const time = now.toLocaleString();
-      document.getElementById('time').textContent = time;
+      document.getElementById('datetime').textContent = `Updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+      const hour = now.getHours();
+      document.getElementById('weather-icon').textContent = hour >= 6 && hour < 18 ? '☀️' : '🌙';
+      document.body.style.backgroundImage = hour >= 6 && hour < 18
+        ? "url('BG Dashboard Sora Day.png')"
+        : "url('BG Dashboard Sora Night.png')";
     }
 
-    function setBackground() {
-      const hour = new Date().getHours();
-      const body = document.body;
-      const weatherIcon = document.getElementById('weatherIcon');
-      if (hour >= 6 && hour < 18) {
-        body.style.backgroundImage = "url('BG Dashboard Sora Day.png')";
-        weatherIcon.textContent = '☀️';
-        document.querySelectorAll('.card').forEach(card => card.style.background = 'rgba(240, 240, 240, 0.2)');
-      } else {
-        body.style.backgroundImage = "url('BG Dashboard Sora Night.png')";
-        weatherIcon.textContent = '🌙';
-        document.querySelectorAll('.card').forEach(card => card.style.background = 'rgba(0, 0, 0, 0.35)');
-      }
-    }
-
-    setInterval(updateTime, 1000);
-    setBackground();
+    fetchData();
+    updateTime();
+    setInterval(() => { fetchData(); updateTime(); }, 15000);
   </script>
 </body>
 </html>
