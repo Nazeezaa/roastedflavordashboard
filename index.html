@@ -9,12 +9,14 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Roboto', sans-serif;
-      background: url('BG Dashboard Sora Day.png') no-repeat center center fixed;
       background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
       color: #111;
       height: 100vh;
       width: 100vw;
       overflow: hidden;
+      transition: background-image 0.5s ease-in-out;
     }
     .container {
       position: absolute;
@@ -38,7 +40,7 @@
       margin-bottom: 8px;
     }
     .card {
-      background: rgba(255, 255, 255, 0.7);
+      background: linear-gradient(135deg, rgba(245, 245, 245, 0.8), rgba(230, 230, 230, 0.8));
       border-radius: 12px;
       padding: 10px 15px;
       display: flex;
@@ -71,5 +73,12 @@
     <div class="card"><span class="label">PM1.0</span><span class="value safe">0 µg/m³</span></div>
     <div class="card"><span class="label">PM2.5</span><span class="value safe">0 µg/m³</span></div>
   </div>
+  <script>
+    const hour = new Date().getHours();
+    const isDay = hour >= 6 && hour < 18;
+    document.body.style.backgroundImage = isDay 
+      ? "url('BG Dashboard Sora Day.png')" 
+      : "url('BG Dashboard Sora Night.png')";
+  </script>
 </body>
 </html>
