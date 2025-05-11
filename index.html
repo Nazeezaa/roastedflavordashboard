@@ -114,9 +114,7 @@
       .card { flex-direction: column; align-items: flex-start; }
       
       #graphBox canvas {
-  filter:
-    drop-shadow(0 0 8px rgba(255,255,255,0.8))
-    drop-shadow(0 0 16px rgba(255,255,255,0.5));
+
 }
 
     }
@@ -186,9 +184,20 @@
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
     }
     let chart;
+    
+    function getPMColor(value) {
+  if (value < 25) return { color: '#ffaa00', glow: 'rgba(255,170,0,0.4)' };     // ส้ม
+  if (value < 50) return { color: '#ff4444', glow: 'rgba(255,68,68,0.5)' };     // แดง
+  if (value < 100) return { color: '#aa00ff', glow: 'rgba(170,0,255,0.5)' };    // ม่วง
+  return { color: '#ff00ff', glow: 'rgba(255,0,255,0.6)' };                     // ม่วงแรง
+}
+
    function drawChart(data) {
   const ctx = document.getElementById('chart').getContext('2d');
   chart?.destroy();
+
+  const lastPM = parseFloat(data[data.length - 1].field8);
+  const style = getPMColor(lastPM);
 
   chart = new Chart(ctx, {
     type: 'line',
@@ -197,40 +206,45 @@
       datasets: [{
         label: 'PM2.5 µg/m³',
         data: data.map(e => parseFloat(e.field8)),
-        borderColor: '#ffffff',        // สีขาว
+        borderColor: style.color,
         borderWidth: 3,
         tension: 0.2,
-        pointRadius: 0,                // ไม่โชว์จุด
+        pointRadius: 0,
         fill: false
       }]
     },
     options: {
-  animation: false,            // ปิด animation
-  responsive: true,
-  maintainAspectRatio: false, // ป้องกัน layout ทะลุ/บีบผิดรูป
-  layout: {
-    padding: 10
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: { color: '#ccc' },
-      grid: { color: 'rgba(255,255,255,0.1)' }
-    },
-    x: {
-      ticks: { color: '#ccc' },
-      grid: { color: 'rgba(255,255,255,0.1)' }
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: 10
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc' },
+          grid: { color: 'rgba(255,255,255,0.1)' }
+        },
+        x: {
+          ticks: { color: '#ccc' },
+          grid: { color: 'rgba(255,255,255,0.1)' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#eee' }
+        }
+      }
     }
-  },
-  plugins: {
-    legend: {
-      labels: { color: '#eee' }
-    }
-  }
+  });
+
+  // เปลี่ยน glow ตามค่าฝุ่น
+  document.getElementById('chart').style.filter =
+    `drop-shadow(0 0 8px ${style.glow}) drop-shadow(0 0 16px ${style.glow})`;
+
 }
 
-  });
-}
 
     function fetchData() {
       fetch('https://api.thingspeak.com/channels/2956838/feeds.json?api_key=1MLQRZI24QGYN958&results=10')
