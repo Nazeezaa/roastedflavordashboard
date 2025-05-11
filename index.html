@@ -131,15 +131,33 @@
   }
 
   .dashboard {
-    margin-bottom: 280px; /* <<< เว้นพื้นที่ให้ .graph และ .log แสดงโดยไม่โดนปุ่มบัง */
-  }
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px auto;
+}
 
   .graph, .log {
-    position: absolute; /* เหมือนเดิม */
-    left: 20px;
-    width: calc(100% - 40px);
-  }
+  display: none;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+  color: #ccc;
+  font-size: 12px;
+  width: 100%;
+  margin-top: 20px;
 }
+
+.graph {
+  height: 200px;
+}
+
+.log {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
 
   </style>
   
