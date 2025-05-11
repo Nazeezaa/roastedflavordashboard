@@ -196,32 +196,37 @@
         label: 'PM2.5 µg/m³',
         data: data.map(e => parseFloat(e.field8)),
         borderColor: '#ffffff',        // สีขาว
-        borderWidth: 2,
+        borderWidth: 3,
         tension: 0.2,
         pointRadius: 0,                // ไม่โชว์จุด
         fill: false
       }]
     },
     options: {
-      animation: false,               // ปิด animation
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { color: '#ccc' },
-          grid: { color: 'rgba(255,255,255,0.1)' }
-        },
-        x: {
-          ticks: { color: '#ccc' },
-          grid: { color: 'rgba(255,255,255,0.1)' }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: { color: '#eee' }
-        }
-      }
+  animation: false,            // ปิด animation
+  responsive: true,
+  maintainAspectRatio: false, // ป้องกัน layout ทะลุ/บีบผิดรูป
+  layout: {
+    padding: 10
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: { color: '#ccc' },
+      grid: { color: 'rgba(255,255,255,0.1)' }
+    },
+    x: {
+      ticks: { color: '#ccc' },
+      grid: { color: 'rgba(255,255,255,0.1)' }
     }
+  },
+  plugins: {
+    legend: {
+      labels: { color: '#eee' }
+    }
+  }
+}
+
   });
 }
 
