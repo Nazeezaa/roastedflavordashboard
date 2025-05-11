@@ -64,6 +64,11 @@
       font-size: 14px;
       font-weight: bold;
       margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .title.day {
+      color: #222;
     }
 
     .status-box {
@@ -103,7 +108,7 @@
 <body>
   <div class="dashboard">
     <div class="status-box">
-      <div class="title">ROASTED FLAVORS DASHBOARD</div>
+      <div class="title" id="titleText">ROASTED FLAVORS DASHBOARD</div>
       <div class="meta">Updated: <span id="updated"></span></div>
       <div class="meta">Weather: <span id="weather"></span></div>
     </div>
@@ -130,6 +135,7 @@
         ? "url('BG Dashboard Sora Night.png')"
         : "url('BG Dashboard Sora Day.png')";
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
+      document.getElementById('titleText').className = isNight ? 'title' : 'title day';
     }
 
     function fetchData() {
