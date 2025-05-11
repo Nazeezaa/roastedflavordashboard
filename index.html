@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ROASTED FLAVORS DASHBOARD</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
     body {
       background: url('BG Dashboard Sora Night.png') no-repeat center center fixed;
       background-size: cover;
@@ -33,44 +37,35 @@
       justify-content: space-between;
       align-items: center;
       color: #ccc;
+      position: relative;
+    }
+    .toggle-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      position: absolute;
+      bottom: -50px;
+      right: 0;
+    }
+    .toggle-buttons button {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #666;
+      color: #eee;
+      border-radius: 5px;
+      padding: 4px 10px;
+      cursor: pointer;
     }
     .value { font-weight: bold; }
     .header { font-weight: bold; font-size: 13px; margin-bottom: 4px; color: #aaa; }
     .meta { font-size: 12px; color: #999; margin-bottom: 6px; }
-    .title { font-size: 14px; font-weight: bold; margin-bottom: 4px; color: #fff; }
-    .title.day { color: #222; }
+    .title { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
     .status-box { text-align: right; }
     .highlight-green { color: #00e676; }
     .highlight-orange { color: #ffb300; }
     .highlight-red { color: #ff5252; }
-    .log, .graph {
-      position: absolute;
-      left: 20px;
-      background: rgba(0,0,0,0.5);
-      padding: 10px;
-      border-radius: 8px;
-      color: #ccc;
-      font-size: 12px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .log { bottom: 20px; width: 90%; }
-    .graph { bottom: 240px; width: 90%; display: none; }
-    .controls {
-      position: absolute;
-      bottom: 460px;
-      left: 20px;
-    }
-    .controls button {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: #fff;
-      padding: 6px 10px;
-      margin-right: 6px;
-      cursor: pointer;
-      border-radius: 6px;
-      font-size: 12px;
-    }
+    .log, .graph { display: none; position: absolute; left: 20px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; color: #ccc; font-size: 12px; }
+    .log { bottom: 20px; max-height: 150px; overflow-y: auto; }
+    .graph { bottom: 180px; width: 80vw; height: 200px; }
     @media (max-width: 768px) {
       .dashboard { top: 10px; right: 10px; max-width: 95vw; }
       .card { flex-direction: column; align-items: flex-start; }
@@ -80,7 +75,7 @@
 <body>
   <div class="dashboard">
     <div class="status-box">
-      <div class="title" id="titleText">ROASTED FLAVORS DASHBOARD</div>
+      <div class="title">ROASTED FLAVORS DASHBOARD</div>
       <div class="meta">Updated: <span id="updated"></span></div>
       <div class="meta">Weather: <span id="weather"></span></div>
     </div>
@@ -91,88 +86,80 @@
     <div class="card"><div class="header">Alcohol</div><div class="value highlight-red" id="alcohol">0.00 ppm</div></div>
     <div class="card"><div class="header">Smoke</div><div class="value highlight-green" id="smoke">0.00 ppm</div></div>
     <div class="card"><div class="header">PM1.0</div><div class="value highlight-green" id="pm1">0 µg/m³</div></div>
-    <div class="card"><div class="header">PM2.5</div><div class="value highlight-green" id="pm25">0 µg/m³</div></div>
+    <div class="card">
+      <div class="header">PM2.5</div>
+      <div class="value highlight-green" id="pm25">0 µg/m³</div>
+      <div class="toggle-buttons">
+        <button onclick="toggleLog()">Log</button>
+        <button onclick="toggleGraph()">Graph</button>
+      </div>
+    </div>
   </div>
 
-  <div class="controls">
-    <button onclick="toggleLog()">Toggle Log</button>
-    <button onclick="toggleGraph()">Toggle Graph</button>
-  </div>
-
+  <div class="graph" id="graphBox"><canvas id="chart"></canvas></div>
   <div class="log" id="logBox">Full Log (Recent)</div>
-  <div class="graph" id="graphBox">
-    <canvas id="pmChart"></canvas>
-  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const pmChartCtx = document.getElementById('pmChart').getContext('2d');
-    const chart = new Chart(pmChartCtx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'PM2.5 µg/m³',
-          data: [],
-          borderColor: '#00e5ff',
-          backgroundColor: 'rgba(0,229,255,0.1)',
-          tension: 0.3
-        }]
-      },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
-
-    function toggleLog() {
-      const box = document.getElementById('logBox');
-      box.style.display = box.style.display === 'none' ? 'block' : 'none';
-    }
-    function toggleGraph() {
-      const box = document.getElementById('graphBox');
-      box.style.display = box.style.display === 'none' ? 'block' : 'none';
-    }
-
     function updateTime() {
       const now = new Date();
       document.getElementById('updated').innerText = now.toLocaleString();
       const hour = now.getHours();
       const isNight = hour < 6 || hour >= 18;
-      document.body.style.backgroundImage = isNight ?
-        "url('BG Dashboard Sora Night.png')" : "url('BG Dashboard Sora Day.png')";
+      document.body.style.backgroundImage = isNight
+        ? "url('BG Dashboard Sora Night.png')"
+        : "url('BG Dashboard Sora Day.png')";
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
-      document.getElementById('titleText').className = isNight ? 'title' : 'title day';
     }
-
+    let chart;
+    function drawChart(data) {
+      const ctx = document.getElementById('chart').getContext('2d');
+      chart?.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(e => new Date(e.created_at).toLocaleTimeString()),
+          datasets: [{
+            label: 'PM2.5 µg/m³',
+            data: data.map(e => parseFloat(e.field8)),
+            borderColor: '#00bcd4',
+            borderWidth: 2,
+            tension: 0.2
+          }]
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
+          plugins: { legend: { labels: { color: '#eee' } } }
+        }
+      });
+    }
     function fetchData() {
       fetch('https://api.thingspeak.com/channels/2956838/feeds.json?api_key=1MLQRZI24QGYN958&results=10')
-        .then(res => res.json())
-        .then(data => {
-          const last = data.feeds[data.feeds.length - 1];
-          document.getElementById('temp').textContent = parseFloat(last.field1).toFixed(2) + ' °C';
-          document.getElementById('co2').textContent = parseFloat(last.field2).toFixed(2) + ' ppm';
-          document.getElementById('nh3').textContent = parseFloat(last.field3).toFixed(2) + ' ppm';
-          document.getElementById('benzene').textContent = parseFloat(last.field4).toFixed(2) + ' ppm';
-          document.getElementById('alcohol').textContent = parseFloat(last.field5).toFixed(2) + ' ppm';
-          document.getElementById('smoke').textContent = parseFloat(last.field6).toFixed(2) + ' ppm';
-          document.getElementById('pm1').textContent = parseFloat(last.field7).toFixed(0) + ' µg/m³';
-          document.getElementById('pm25').textContent = parseFloat(last.field8).toFixed(0) + ' µg/m³';
-
-          const log = document.getElementById('logBox');
-          log.innerHTML = 'Full Log (Recent)<br>' + data.feeds.map(f => {
-            const t = new Date(f.created_at).toLocaleTimeString();
-            return `${t} — Temp: ${f.field1}°C, CO₂: ${f.field2}ppm, PM2.5: ${f.field8} µg/m³`;
-          }).reverse().join('<br>');
-
-          chart.data.labels = data.feeds.map(f => new Date(f.created_at).toLocaleTimeString());
-          chart.data.datasets[0].data = data.feeds.map(f => parseFloat(f.field8));
-          chart.update();
-        });
+        .then(res => res.json()).then(data => {
+        const f = data.feeds, l = f[f.length - 1];
+        document.getElementById('temp').textContent = parseFloat(l.field1).toFixed(2) + ' °C';
+        document.getElementById('co2').textContent = parseFloat(l.field2).toFixed(2) + ' ppm';
+        document.getElementById('nh3').textContent = parseFloat(l.field3).toFixed(2) + ' ppm';
+        document.getElementById('benzene').textContent = parseFloat(l.field4).toFixed(2) + ' ppm';
+        document.getElementById('alcohol').textContent = parseFloat(l.field5).toFixed(2) + ' ppm';
+        document.getElementById('smoke').textContent = parseFloat(l.field6).toFixed(2) + ' ppm';
+        document.getElementById('pm1').textContent = parseFloat(l.field7).toFixed(0) + ' µg/m³';
+        document.getElementById('pm25').textContent = parseFloat(l.field8).toFixed(0) + ' µg/m³';
+        drawChart(f);
+        document.getElementById('logBox').textContent = 'Full Log (Recent)\n' + f.map(e => `${new Date(e.created_at).toLocaleTimeString()} — Temp: ${e.field1} °C, CO₂: ${e.field2} ppm, PM2.5: ${e.field8} µg/m³`).join('\n');
+      });
     }
-
+    function toggleLog() {
+      const log = document.getElementById('logBox');
+      log.style.display = log.style.display === 'block' ? 'none' : 'block';
+    }
+    function toggleGraph() {
+      const graph = document.getElementById('graphBox');
+      graph.style.display = graph.style.display === 'block' ? 'none' : 'block';
+    }
     updateTime();
     fetchData();
-    setInterval(() => {
-      updateTime();
-      fetchData();
-    }, 5000);
+    setInterval(() => { updateTime(); fetchData(); }, 5000);
   </script>
 </body>
 </html>
