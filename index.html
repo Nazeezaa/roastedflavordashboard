@@ -122,10 +122,14 @@
     <div class="card">
       <div class="header">PM2.5</div>
       <div class="value highlight-green" id="pm25">0 µg/m³</div>
-      <div class="toggle-buttons">
-        <button onclick="toggleLog()">Log</button>
-        <button onclick="toggleGraph()">Graph</button>
-      </div>
+      <div class="card toggle-buttons">
+  <div class="header">Actions</div>
+  <div style="display: flex; gap: 10px; justify-content: flex-end;">
+    <button onclick="toggleLog()">📜</button>
+    <button onclick="toggleGraph()">📈</button>
+  </div>
+</div>
+
     </div>
   </div>
 
