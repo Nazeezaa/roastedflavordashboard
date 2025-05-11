@@ -120,14 +120,18 @@
     <div class="card"><div class="header">Smoke</div><div class="value highlight-green" id="smoke">0.00 ppm</div></div>
     <div class="card"><div class="header">PM1.0</div><div class="value highlight-green" id="pm1">0 µg/m³</div></div>
     <div class="card"><div class="header">PM2.5</div><div class="value highlight-green" id="pm25">57 µg/m³</div></div>
-
 <div class="card toggle-buttons">
   <div class="header">Actions</div>
   <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
-    <button onclick="toggleLog()">📜</button>
-    <button onclick="toggleGraph()">📈</button>
+    <button onclick="toggleLog()" class="header" aria-label="Log">
+      <!-- SVG ไอคอน Log -->
+    </button>
+    <button onclick="toggleGraph()" class="header" aria-label="Graph">
+      <!-- SVG ไอคอน Graph -->
+    </button>
   </div>
 </div>
+
     </div>
   </div>
 
