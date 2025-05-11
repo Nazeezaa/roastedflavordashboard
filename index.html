@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ROASTED FLAVORS DASHBOARD</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  
+
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
   * {
@@ -14,22 +14,21 @@
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
   }
-
   body {
     background: url('BG Dashboard Sora Night.png') no-repeat center center fixed;
     background-size: cover;
     color: #fff;
     overflow-x: hidden;
   }
-
   .dashboard {
+    position: absolute;
+    top: 20px;
+    right: 20px;
     max-width: 260px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 20px auto;
   }
-
   .card {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
@@ -41,18 +40,18 @@
     color: #ccc;
     position: relative;
   }
-
   .toggle-buttons {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     padding: 10px 16px;
+    font-size: 14px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    color: #ccc;
+    position: relative;
     margin-top: 10px;
   }
-
   .toggle-buttons button {
     background: rgba(255, 255, 255, 0.05);
     border: none;
@@ -63,19 +62,16 @@
     font-size: 18px;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   }
-
   .toggle-buttons button:hover {
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
   }
-
   .toggle-buttons button.active {
     background: rgba(255, 255, 255, 0.25);
     color: #00e676;
     box-shadow: 0 0 6px rgba(0, 230, 118, 0.4);
   }
-
   .value { font-weight: bold; }
   .header { font-weight: bold; font-size: 13px; margin-bottom: 4px; color: #aaa; }
   .meta { font-size: 12px; color: #999; margin-bottom: 6px; }
@@ -85,48 +81,49 @@
   .highlight-orange { color: #ffb300; }
   .highlight-red { color: #ff5252; }
 
-  .graph,
-  .log {
+  .log, .graph {
     display: none;
-    position: static;
-    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    left: 20px;
+    background: rgba(0,0,0,0.5);
     padding: 10px;
     border-radius: 8px;
     color: #ccc;
     font-size: 12px;
-    width: 100%;
-    margin-top: 20px;
+    width: calc(100% - 40px);
   }
-
-  .graph {
-    height: 200px;
-  }
-
   .log {
+    bottom: 20px;
     max-height: 150px;
     overflow-y: auto;
   }
+  .graph {
+    bottom: 180px;
+    height: 200px;
+  }
 
   @media (max-width: 768px) {
+    .dashboard {
+      position: static;
+      margin: 20px auto;
+    }
     .toggle-buttons {
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
     }
-
     .toggle-buttons button {
       width: 100%;
       justify-content: flex-start;
     }
-
-    .dashboard {
+    .graph, .log {
       position: static;
-      margin: 20px 10px;
+      margin-top: 20px;
+      width: 100%;
     }
   }
 </style>
 
-  
 </head>
 <body>
   <div class="dashboard">
@@ -145,33 +142,12 @@
     <div class="card"><div class="header">PM2.5</div><div class="value highlight-green" id="pm25">57 µg/m³</div></div>
 
     <div class="card toggle-buttons">
-  <div class="header">Actions</div>
-  <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
-    
-    <button onclick="toggleLog()" class="header" aria-label="Log">
-      <!-- SVG ไอคอน Log -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-           viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-           width="24" height="24">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-      </svg>
-    </button>
-
-    <button onclick="toggleGraph()" class="header" aria-label="Graph">
-      <!-- SVG ไอคอน Graph -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-           viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-           width="24" height="24">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-      </svg>
-    </button>
-
-  </div>
-
+      <div class="header">Actions</div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+        <button onclick="toggleLog()" class="header" aria-label="Log">📄</button>
+        <button onclick="toggleGraph()" class="header" aria-label="Graph">📈</button>
+      </div>
     </div>
-  </div>
   </div>
 
   <div class="graph" id="graphBox"><canvas id="chart"></canvas></div>
@@ -189,96 +165,94 @@
         : "url('BG Dashboard Sora Day.png')";
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
     }
+
     let chart;
-    
+
     function getPMColor(value) {
-  if (value < 25) return { color: '#ffaa00', glow: 'rgba(255,170,0,0.4)' };     // ส้ม
-  if (value < 50) return { color: '#ff4444', glow: 'rgba(255,68,68,0.5)' };     // แดง
-  if (value < 100) return { color: '#aa00ff', glow: 'rgba(170,0,255,0.5)' };    // ม่วง
-  return { color: '#ff00ff', glow: 'rgba(255,0,255,0.6)' };                     // ม่วงแรง
-}
-
-   function drawChart(data) {
-  const ctx = document.getElementById('chart').getContext('2d');
-  chart?.destroy();
-
-  const lastPM = parseFloat(data[data.length - 1].field8);
-  const style = getPMColor(lastPM);
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: data.map(e => new Date(e.created_at).toLocaleTimeString()),
-      datasets: [{
-        label: 'PM2.5 µg/m³',
-        data: data.map(e => parseFloat(e.field8)),
-        borderColor: style.color,
-        borderWidth: 3,
-        tension: 0.2,
-        pointRadius: 0,
-        fill: false
-      }]
-    },
-    options: {
-      animation: false,
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-        padding: 10
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { color: '#ccc' },
-          grid: { color: 'rgba(255,255,255,0.1)' }
-        },
-        x: {
-          ticks: { color: '#ccc' },
-          grid: { color: 'rgba(255,255,255,0.1)' }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: { color: '#eee' }
-        }
-      }
+      if (value < 25) return { color: '#ffaa00', glow: 'rgba(255,170,0,0.4)' };
+      if (value < 50) return { color: '#ff4444', glow: 'rgba(255,68,68,0.5)' };
+      if (value < 100) return { color: '#aa00ff', glow: 'rgba(170,0,255,0.5)' };
+      return { color: '#ff00ff', glow: 'rgba(255,0,255,0.6)' };
     }
-  });
 
-  // เปลี่ยน glow ตามค่าฝุ่น
-  document.getElementById('chart').style.filter =
-    `drop-shadow(0 0 8px ${style.glow}) drop-shadow(0 0 16px ${style.glow})`;
+    function drawChart(data) {
+      const ctx = document.getElementById('chart').getContext('2d');
+      chart?.destroy();
+      const lastPM = parseFloat(data[data.length - 1].field8);
+      const style = getPMColor(lastPM);
 
-}
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(e => new Date(e.created_at).toLocaleTimeString()),
+          datasets: [{
+            label: 'PM2.5 µg/m³',
+            data: data.map(e => parseFloat(e.field8)),
+            borderColor: style.color,
+            borderWidth: 3,
+            tension: 0.2,
+            pointRadius: 0,
+            fill: false
+          }]
+        },
+        options: {
+          animation: false,
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: 10 },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#ccc' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            x: {
+              ticks: { color: '#ccc' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#eee' } }
+          }
+        }
+      });
 
+      document.getElementById('chart').style.filter =
+        `drop-shadow(0 0 8px ${style.glow}) drop-shadow(0 0 16px ${style.glow})`;
+    }
 
     function fetchData() {
       fetch('https://api.thingspeak.com/channels/2956838/feeds.json?api_key=1MLQRZI24QGYN958&results=10')
         .then(res => res.json()).then(data => {
-        const f = data.feeds, l = f[f.length - 1];
-        document.getElementById('temp').textContent = parseFloat(l.field1).toFixed(2) + ' °C';
-        document.getElementById('co2').textContent = parseFloat(l.field2).toFixed(2) + ' ppm';
-        document.getElementById('nh3').textContent = parseFloat(l.field3).toFixed(2) + ' ppm';
-        document.getElementById('benzene').textContent = parseFloat(l.field4).toFixed(2) + ' ppm';
-        document.getElementById('alcohol').textContent = parseFloat(l.field5).toFixed(2) + ' ppm';
-        document.getElementById('smoke').textContent = parseFloat(l.field6).toFixed(2) + ' ppm';
-        document.getElementById('pm1').textContent = parseFloat(l.field7).toFixed(0) + ' µg/m³';
-        document.getElementById('pm25').textContent = parseFloat(l.field8).toFixed(0) + ' µg/m³';
-        drawChart(f);
-        document.getElementById('logBox').textContent = 'Full Log (Recent)\n' + f.map(e => `${new Date(e.created_at).toLocaleTimeString()} — Temp: ${e.field1} °C, CO₂: ${e.field2} ppm, PM2.5: ${e.field8} µg/m³`).join('\n');
-      });
+          const f = data.feeds, l = f[f.length - 1];
+          document.getElementById('temp').textContent = parseFloat(l.field1).toFixed(2) + ' °C';
+          document.getElementById('co2').textContent = parseFloat(l.field2).toFixed(2) + ' ppm';
+          document.getElementById('nh3').textContent = parseFloat(l.field3).toFixed(2) + ' ppm';
+          document.getElementById('benzene').textContent = parseFloat(l.field4).toFixed(2) + ' ppm';
+          document.getElementById('alcohol').textContent = parseFloat(l.field5).toFixed(2) + ' ppm';
+          document.getElementById('smoke').textContent = parseFloat(l.field6).toFixed(2) + ' ppm';
+          document.getElementById('pm1').textContent = parseFloat(l.field7).toFixed(0) + ' µg/m³';
+          document.getElementById('pm25').textContent = parseFloat(l.field8).toFixed(0) + ' µg/m³';
+          drawChart(f);
+          document.getElementById('logBox').textContent =
+            'Full Log (Recent)\n' + f.map(e => `${new Date(e.created_at).toLocaleTimeString()} — Temp: ${e.field1} °C, CO₂: ${e.field2} ppm, PM2.5: ${e.field8} µg/m³`).join('\n');
+        });
     }
+
     function toggleLog() {
       const log = document.getElementById('logBox');
       log.style.display = log.style.display === 'block' ? 'none' : 'block';
     }
+
     function toggleGraph() {
       const graph = document.getElementById('graphBox');
       graph.style.display = graph.style.display === 'block' ? 'none' : 'block';
     }
+
     updateTime();
     fetchData();
     setInterval(() => { updateTime(); fetchData(); }, 5000);
   </script>
 </body>
 </html>
+
