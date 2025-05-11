@@ -5,23 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ROASTED FLAVORS DASHBOARD</title>
   <link rel="icon" type="image/png" href="favicon.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Roboto', sans-serif;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
     body {
       background: url('BG Dashboard Sora Night.png') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
       overflow-x: hidden;
     }
-
     .dashboard {
       position: absolute;
       top: 20px;
@@ -31,7 +24,6 @@
       flex-direction: column;
       gap: 10px;
     }
-
     .card {
       background-color: rgba(0, 0, 0, 0.5);
       border-radius: 10px;
@@ -42,66 +34,46 @@
       align-items: center;
       color: #ccc;
     }
-
-    .value {
-      font-weight: bold;
-    }
-
-    .header {
-      font-weight: bold;
-      font-size: 13px;
-      margin-bottom: 4px;
-      color: #aaa;
-    }
-
-    .meta {
-      font-size: 12px;
-      color: #999;
-      margin-bottom: 6px;
-    }
-
-    .title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      color: #fff;
-    }
-
-    .title.day {
-      color: #222;
-    }
-
-    .status-box {
-      text-align: right;
-    }
-
+    .value { font-weight: bold; }
+    .header { font-weight: bold; font-size: 13px; margin-bottom: 4px; color: #aaa; }
+    .meta { font-size: 12px; color: #999; margin-bottom: 6px; }
+    .title { font-size: 14px; font-weight: bold; margin-bottom: 4px; color: #fff; }
+    .title.day { color: #222; }
+    .status-box { text-align: right; }
     .highlight-green { color: #00e676; }
     .highlight-orange { color: #ffb300; }
     .highlight-red { color: #ff5252; }
-
-    .log {
+    .log, .graph {
       position: absolute;
-      bottom: 20px;
       left: 20px;
       background: rgba(0,0,0,0.5);
       padding: 10px;
       border-radius: 8px;
       color: #ccc;
       font-size: 12px;
-      max-height: 150px;
+      max-height: 200px;
       overflow-y: auto;
     }
-
+    .log { bottom: 20px; width: 90%; }
+    .graph { bottom: 240px; width: 90%; display: none; }
+    .controls {
+      position: absolute;
+      bottom: 460px;
+      left: 20px;
+    }
+    .controls button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 6px 10px;
+      margin-right: 6px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 12px;
+    }
     @media (max-width: 768px) {
-      .dashboard {
-        top: 10px;
-        right: 10px;
-        max-width: 95vw;
-      }
-      .card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      .dashboard { top: 10px; right: 10px; max-width: 95vw; }
+      .card { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -112,7 +84,6 @@
       <div class="meta">Updated: <span id="updated"></span></div>
       <div class="meta">Weather: <span id="weather"></span></div>
     </div>
-
     <div class="card"><div class="header">Temperature</div><div class="value highlight-green" id="temp">0.00 °C</div></div>
     <div class="card"><div class="header">CO₂</div><div class="value highlight-orange" id="co2">0.00 ppm</div></div>
     <div class="card"><div class="header">NH₃</div><div class="value highlight-orange" id="nh3">0.00 ppm</div></div>
@@ -123,26 +94,58 @@
     <div class="card"><div class="header">PM2.5</div><div class="value highlight-green" id="pm25">0 µg/m³</div></div>
   </div>
 
+  <div class="controls">
+    <button onclick="toggleLog()">Toggle Log</button>
+    <button onclick="toggleGraph()">Toggle Graph</button>
+  </div>
+
   <div class="log" id="logBox">Full Log (Recent)</div>
+  <div class="graph" id="graphBox">
+    <canvas id="pmChart"></canvas>
+  </div>
 
   <script>
+    const pmChartCtx = document.getElementById('pmChart').getContext('2d');
+    const chart = new Chart(pmChartCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'PM2.5 µg/m³',
+          data: [],
+          borderColor: '#00e5ff',
+          backgroundColor: 'rgba(0,229,255,0.1)',
+          tension: 0.3
+        }]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    function toggleLog() {
+      const box = document.getElementById('logBox');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+    function toggleGraph() {
+      const box = document.getElementById('graphBox');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+
     function updateTime() {
       const now = new Date();
       document.getElementById('updated').innerText = now.toLocaleString();
       const hour = now.getHours();
       const isNight = hour < 6 || hour >= 18;
-      document.body.style.backgroundImage = isNight
-        ? "url('BG Dashboard Sora Night.png')"
-        : "url('BG Dashboard Sora Day.png')";
+      document.body.style.backgroundImage = isNight ?
+        "url('BG Dashboard Sora Night.png')" : "url('BG Dashboard Sora Day.png')";
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
       document.getElementById('titleText').className = isNight ? 'title' : 'title day';
     }
 
     function fetchData() {
-      fetch('https://api.thingspeak.com/channels/2956838/feeds.json?api_key=1MLQRZI24QGYN958&results=1')
+      fetch('https://api.thingspeak.com/channels/2956838/feeds.json?api_key=1MLQRZI24QGYN958&results=10')
         .then(res => res.json())
         .then(data => {
-          const last = data.feeds[0];
+          const last = data.feeds[data.feeds.length - 1];
           document.getElementById('temp').textContent = parseFloat(last.field1).toFixed(2) + ' °C';
           document.getElementById('co2').textContent = parseFloat(last.field2).toFixed(2) + ' ppm';
           document.getElementById('nh3').textContent = parseFloat(last.field3).toFixed(2) + ' ppm';
@@ -153,9 +156,14 @@
           document.getElementById('pm25').textContent = parseFloat(last.field8).toFixed(0) + ' µg/m³';
 
           const log = document.getElementById('logBox');
-          const t = new Date(last.created_at).toLocaleTimeString();
-          const line = `${t} — Temp: ${last.field1}°C, CO₂: ${last.field2}ppm, PM2.5: ${last.field8} µg/m³\n`;
-          log.textContent += line;
+          log.innerHTML = 'Full Log (Recent)<br>' + data.feeds.map(f => {
+            const t = new Date(f.created_at).toLocaleTimeString();
+            return `${t} — Temp: ${f.field1}°C, CO₂: ${f.field2}ppm, PM2.5: ${f.field8} µg/m³`;
+          }).reverse().join('<br>');
+
+          chart.data.labels = data.feeds.map(f => new Date(f.created_at).toLocaleTimeString());
+          chart.data.datasets[0].data = data.feeds.map(f => parseFloat(f.field8));
+          chart.update();
         });
     }
 
