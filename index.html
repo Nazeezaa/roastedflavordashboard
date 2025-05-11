@@ -130,12 +130,16 @@
     justify-content: flex-start;
   }
 
-  .graph,
-  .log {
-    margin-top: 100px; /* เพิ่มจาก 70px เป็น 100px */
+  .dashboard {
+    margin-bottom: 280px; /* <<< เว้นพื้นที่ให้ .graph และ .log แสดงโดยไม่โดนปุ่มบัง */
+  }
+
+  .graph, .log {
+    position: absolute; /* เหมือนเดิม */
+    left: 20px;
+    width: calc(100% - 40px);
   }
 }
-
 
   </style>
   
