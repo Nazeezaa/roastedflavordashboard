@@ -51,20 +51,30 @@
   position: relative;
   margin-top: 10px;
 }
+
 .toggle-buttons button {
   background: rgba(255, 255, 255, 0.05);
   border: none;
-  color: #eee;
+  color: #aaa;
   border-radius: 6px;
   padding: 4px 10px;
   cursor: pointer;
   font-size: 18px;
-  transition: background 0.2s;
-}
-.toggle-buttons button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
+.toggle-buttons button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.toggle-buttons button.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #00e676;
+  box-shadow: 0 0 6px rgba(0, 230, 118, 0.4);
+}
+    
     .value { font-weight: bold; }
     .header { font-weight: bold; font-size: 13px; margin-bottom: 4px; color: #aaa; }
     .meta { font-size: 12px; color: #999; margin-bottom: 6px; }
@@ -102,8 +112,14 @@
     @media (max-width: 768px) {
       .dashboard { top: 10px; right: 10px; max-width: 95vw; }
       .card { flex-direction: column; align-items: flex-start; }
+      
+      #graphBox canvas {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
+
     }
   </style>
+  
 </head>
 <body>
   <div class="dashboard">
@@ -168,27 +184,47 @@
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
     }
     let chart;
-    function drawChart(data) {
-      const ctx = document.getElementById('chart').getContext('2d');
-      chart?.destroy();
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.map(e => new Date(e.created_at).toLocaleTimeString()),
-          datasets: [{
-            label: 'PM2.5 µg/m³',
-            data: data.map(e => parseFloat(e.field8)),
-            borderColor: '#00bcd4',
-            borderWidth: 2,
-            tension: 0.2
-          }]
+   function drawChart(data) {
+  const ctx = document.getElementById('chart').getContext('2d');
+  chart?.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(e => new Date(e.created_at).toLocaleTimeString()),
+      datasets: [{
+        label: 'PM2.5 µg/m³',
+        data: data.map(e => parseFloat(e.field8)),
+        borderColor: '#ffffff',        // สีขาว
+        borderWidth: 2,
+        tension: 0.2,
+        pointRadius: 0,                // ไม่โชว์จุด
+        fill: false
+      }]
+    },
+    options: {
+      animation: false,               // ปิด animation
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#ccc' },
+          grid: { color: 'rgba(255,255,255,0.1)' }
         },
-        options: {
-          scales: { y: { beginAtZero: true } },
-          plugins: { legend: { labels: { color: '#eee' } } }
+        x: {
+          ticks: { color: '#ccc' },
+          grid: { color: 'rgba(255,255,255,0.1)' }
         }
-      });
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#eee' }
+        }
+      }
     }
+  });
+}
+
     function fetchData() {
       fetch('https://api.thingspeak.com/channels/2956838/feeds.json?api_key=1MLQRZI24QGYN958&results=10')
         .then(res => res.json()).then(data => {
