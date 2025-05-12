@@ -7,6 +7,10 @@
   <link rel="icon" type="image/png" href="favicon.png">
 
   <style>
+    
+    .title {
+  transition: color 0.5s ease;
+}
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
   * {
     margin: 0;
@@ -182,6 +186,10 @@
         ? "url('BG Dashboard Sora Night.png')"
         : "url('BG Dashboard Sora Day.png')";
       document.getElementById('weather').innerText = isNight ? '🌙' : '☀️';
+      // เปลี่ยนสี Title ตามช่วงเวลา
+const title = document.querySelector('.title');
+title.style.color = isNight ? 'black' : 'white';
+
     }
 
     let chart;
